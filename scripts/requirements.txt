@@ -1,0 +1,6 @@
+pynput==1.7.6
+requests==2.28.1
+beautifulsoup4==4.10.0
+pybluez==0.23
+nmap==3.0
+
