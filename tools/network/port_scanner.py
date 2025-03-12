@@ -1,33 +1,35 @@
-import socket
-import argparse
-from concurrent.futures import ThreadPoolExecutor
+import nmap
 
-def scan_port(target, port):
-    """Attempts to connect to a given port on a target host."""
+def scan_ports(target, ports):
+    nm = nmap.PortScanner()
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.settimeout(1)
-            s.connect((target, port))
-            print(f"[+] Port {port} is open on {target}")
-    except (socket.timeout, ConnectionRefusedError):
-        pass
-
-def main():
-    parser = argparse.ArgumentParser(description="Simple Python Port Scanner")
-    parser.add_argument("target", help="Target IP or hostname")
-    parser.add_argument("-p", "--ports", type=str, help="Port range (e.g., 1-1000)", default="1-1024")
-    args = parser.parse_args()
-    
-    start_port, end_port = map(int, args.ports.split("-"))
-    
-    print(f"Scanning {args.target} for open ports {start_port}-{end_port}...")
-    
-    with ThreadPoolExecutor(max_workers=100) as executor:
-        for port in range(start_port, end_port + 1):
-            executor.submit(scan_port, args.target, port)
-    
-    print("Scan complete.")
+        print(f"Scanning {target} for open ports...")
+        nm.scan(target, ports)
+        
+        # Print scan results
+        print(f"Host: {target}")
+        print(f"State: {nm[target].state()}")
+        
+        # Check open ports
+        open_ports = []
+        for protocol in nm[target].all_protocols():
+            print(f"Protocol: {protocol}")
+            lport = nm[target][protocol].keys()
+            for port in lport:
+                if nm[target][protocol][port]['state'] == 'open':
+                    open_ports.append(port)
+                    print(f"Open port: {port}")
+        
+        if not open_ports:
+            print("No open ports found.")
+        return open_ports
+    except Exception as e:
+        print(f"Error scanning {target}: {e}")
+        return []
 
 if __name__ == "__main__":
-    main()
+    target = input("Enter the target (IP or domain): ").strip()
+    ports = input("Enter the port range (e.g., 1-1024, 80,443): ").strip()
+    open_ports = scan_ports(target, ports)
+    print(f"Open ports on {target}: {open_ports}")
 
