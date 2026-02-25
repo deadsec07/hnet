@@ -3,8 +3,8 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "hnet"
-version = "0.1.2"
+name = "hnet-toolkit"
+version = "0.1.3"
 description = "hnet pentest toolkit CLI and tools"
 readme = "README.md"
 requires-python = ">=3.9"

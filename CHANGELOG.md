@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+- Rename PyPI project to `hnet-toolkit` (previous `hnet` is taken on PyPI).
+- Bump version to v0.1.3 to trigger CI release on merge to main.
+
 ## 0.1.2
 - Version bump to trigger CI auto-release on merge to `main` (GitHub Release + optional PyPI publish).
 - No functional changes.
