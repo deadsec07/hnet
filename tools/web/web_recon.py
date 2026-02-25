@@ -2,7 +2,6 @@ import requests
 import socket
 import whois
 import ssl
-import OpenSSL
 from urllib.parse import urlparse
 from dns import resolver
 
@@ -29,7 +28,7 @@ def whois_lookup(domain):
 def http_headers(url):
     try:
         print("\n[INFO] HTTP Headers Inspection for URL:", url)
-        response = requests.head(url)
+        response = requests.head(url, timeout=8, allow_redirects=True)
         for header, value in response.headers.items():
             print(f"{header}: {value}")
     except requests.RequestException as e:
@@ -61,8 +60,8 @@ def subdomain_enum(domain):
                 answers = resolver.resolve(subdomain, 'A')
                 for rdata in answers:
                     print(f"Subdomain {subdomain} IP: {rdata.to_text()}")
-            except Exception as e:
-                print(f"[INFO] Subdomain {subdomain} not found.")
+            except Exception:
+                pass
     except Exception as e:
         print(f"[ERROR] Subdomain enumeration failed: {e}")
 
@@ -81,4 +80,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

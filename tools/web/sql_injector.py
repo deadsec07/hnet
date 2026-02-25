@@ -24,7 +24,7 @@ def test_sql_injection(url, payloads, param):
         
         try:
             print(f"Testing payload: {payload} on {url}")
-            response = requests.get(test_url)
+            response = requests.get(test_url, timeout=8)
             
             # Check for common signs of SQL injection vulnerability
             if response.status_code == 200:
@@ -49,4 +49,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

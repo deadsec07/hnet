@@ -1,1 +1,27 @@
+# OS
 .DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+
+# Environments
+venv/
+.env
+.venv
+
+# Logs and reports
+*.log
+exploit_report.txt
+penetration_test_report.pdf
+packet_sniffer.log
+
+# Editor
+.vscode/
+.idea/

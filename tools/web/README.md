@@ -1,26 +1,20 @@
+Web Tools
+
 sql_injector.py
-pre requisits -> pip install requests
-usage -> python sql_injector.py
-example ->
-Enter the target URL (with the parameter to test): http://example.com/page?id=1
-Enter the parameter name to test (e.g., id, user): id
+- Usage: `python tools/web/sql_injector.py`
+- Example prompts:
+  - Target URL (with parameter): http://example.com/page?id=1
+  - Parameter name: id
 
 xss_tester.py
-pre requisits -> pip install requests
-usage -> python xss_tester.py
-example ->
-Enter the target URL (with the parameter to test): http://example.com/search?q=1
-Enter the parameter name to test (e.g., id, user): q
+- Usage: `python tools/web/xss_tester.py`
+- Example prompts:
+  - Target URL (with parameter): http://example.com/search?q=1
+  - Parameter name: q
 
-## web_recon.py
-
-### Prerequisites:
-- `pip install requests dnspython python-whois pyOpenSSL`
-
-### Usage:
-- `python web_recon.py`
-
-### Example:
-Enter the target URL (with protocol, e.g., https://example.com): https://example.com
-
+web_recon.py
+- Prerequisites provided by `requirements.txt` (requests, dnspython, python-whois)
+- Usage: `python tools/web/web_recon.py`
+- Example prompt:
+  - Enter the target URL (with protocol, e.g., https://example.com): https://example.com
 

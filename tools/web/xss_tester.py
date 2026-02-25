@@ -23,7 +23,7 @@ def test_xss(url, param):
         
         try:
             print(f"Testing payload: {payload} on {url}")
-            response = requests.get(test_url)
+            response = requests.get(test_url, timeout=8)
             
             # Check if the payload is reflected in the response
             if payload in response.text:
@@ -45,4 +45,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
