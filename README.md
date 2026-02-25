@@ -32,6 +32,10 @@ Install as a command
 - Or system/user install: `pip install .` (consider `pipx install .`)
 - Then run `hnet --help` from anywhere.
 
+From PyPI
+- Package name: `hnet-toolkit`
+- Install: `pip install hnet-toolkit` or `pipx install hnet-toolkit`
+
 Tools overview
 - Network: `port_scanner.py`, `subnet_enum.py`, `vuln_scanner.py`, `packet_sniffer.py`
 - Web: `sql_injector.py`, `xss_tester.py`, `web_recon.py`

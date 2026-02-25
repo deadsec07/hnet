@@ -10,7 +10,7 @@ Checklist
 2) Update `CHANGELOG.md` with notable changes.
 3) Merge to `main`.
 4) GitHub Actions will auto-tag `vX.Y.Z`, build artifacts, and create a GitHub Release.
-5) Optional: publishing to PyPI happens if `PYPI_API_TOKEN` is configured in repo secrets.
+5) Optional: publishing to PyPI happens if `PYPI_API_TOKEN` is configured in repo secrets (project name: `hnet-toolkit`).
 
 Manual build/publish (optional)
 - Clean old artifacts: `rm -rf dist build *.egg-info`
