@@ -22,6 +22,11 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Configure git user
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
       - name: Determine version from pyproject
         id: v
         run: |
