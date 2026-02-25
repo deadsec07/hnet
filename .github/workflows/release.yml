@@ -84,9 +84,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Optional: publish to PyPI if token is configured
+      - name: Detect PyPI token presence
+        id: pypi
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          if [ -n "$PYPI_TOKEN" ]; then
+            echo "has=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish to PyPI
-        if: steps.tagcheck.outputs.exists == 'false' && secrets.PYPI_API_TOKEN != ''
+        if: steps.tagcheck.outputs.exists == 'false' && steps.pypi.outputs.has == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
-
