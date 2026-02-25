@@ -1,0 +1,92 @@
+name: Release
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Determine version from pyproject
+        id: v
+        run: |
+          python - <<'PY'
+          import tomllib, os
+          with open('pyproject.toml','rb') as f:
+              data = tomllib.load(f)
+          ver = data['project']['version']
+          print('Detected version:', ver)
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              out.write(f"version={ver}\n")
+          PY
+
+      - name: Check if tag exists
+        id: tagcheck
+        run: |
+          git fetch --tags
+          if git rev-parse -q --verify "refs/tags/v${{ steps.v.outputs.version }}" >/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Tag v${{ steps.v.outputs.version }} already exists."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "Tag v${{ steps.v.outputs.version }} does not exist; will create."
+          fi
+
+      - name: Create tag
+        if: steps.tagcheck.outputs.exists == 'false'
+        run: |
+          git tag -a "v${{ steps.v.outputs.version }}" -m "v${{ steps.v.outputs.version }}"
+          git push origin "v${{ steps.v.outputs.version }}"
+
+      - name: Extract release notes from CHANGELOG
+        if: steps.tagcheck.outputs.exists == 'false'
+        id: notes
+        run: |
+          ver="${{ steps.v.outputs.version }}"
+          if [ -f CHANGELOG.md ]; then
+            awk -v ver="## ${ver}" 'BEGIN{p=0} $0==ver{p=1;next} /^## / && p{p=0} p{print}' CHANGELOG.md > release_notes.txt || true
+          fi
+          echo 'notes<<EOF' >> "$GITHUB_OUTPUT"
+          if [ -s release_notes.txt ]; then cat release_notes.txt >> "$GITHUB_OUTPUT"; else echo "Release ${ver}" >> "$GITHUB_OUTPUT"; fi
+          echo 'EOF' >> "$GITHUB_OUTPUT"
+
+      - name: Build artifacts
+        if: steps.tagcheck.outputs.exists == 'false'
+        run: |
+          python -m pip install --upgrade build
+          python -m build
+
+      - name: Create GitHub Release
+        if: steps.tagcheck.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.v.outputs.version }}
+          name: v${{ steps.v.outputs.version }}
+          body: ${{ steps.notes.outputs.notes }}
+          files: |
+            dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Optional: publish to PyPI if token is configured
+      - name: Publish to PyPI
+        if: steps.tagcheck.outputs.exists == 'false' && secrets.PYPI_API_TOKEN != ''
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+

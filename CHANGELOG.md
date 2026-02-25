@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+- Version bump to trigger CI auto-release on merge to `main` (GitHub Release + optional PyPI publish).
+- No functional changes.
+
 ## 0.1.1
 - Added installable packaging via `pyproject.toml` with `hnet` console entrypoint.
 - Introduced unified CLI (`hnet_cli`) and top-level `./hnet` script.
@@ -10,4 +14,3 @@
 
 ## 0.1.0
 - Initial layout of network, web, wireless, exploitation tools and automation scripts.
-
