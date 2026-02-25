@@ -9,13 +9,16 @@ def port_scanner(target, ports):
     scanner = nmap.PortScanner()
     try:
         print(f"Scanning {target} for open ports...")
-        # Scan the target for the specified ports
         scanner.scan(target, ports)
         open_ports = []
-        for port in scanner[target]['tcp']:
-            if scanner[target]['tcp'][port]['state'] == 'open':
-                open_ports.append(port)
-        return open_ports
+        if target not in scanner.all_hosts():
+            return open_ports
+        proto_map = scanner[target]
+        for proto in proto_map.all_protocols():
+            for port, pdata in proto_map[proto].items():
+                if pdata.get('state') == 'open':
+                    open_ports.append(port)
+        return sorted(open_ports)
     except Exception as e:
         print(f"Error scanning ports: {e}")
         return []
@@ -24,23 +27,22 @@ def port_scanner(target, ports):
 def check_http_headers(url):
     try:
         print(f"Checking HTTP headers for {url}...")
-        response = requests.get(url)
+        response = requests.head(url, timeout=8, allow_redirects=True)
         headers = response.headers
         missing_headers = []
-        
-        # List of common security headers
+
         required_headers = [
-            "Strict-Transport-Security",  # HSTS
-            "X-Content-Type-Options",    # Prevent MIME sniffing
-            "X-Frame-Options",           # Prevent clickjacking
-            "Content-Security-Policy",   # Content Security Policy
-            "X-XSS-Protection"           # Cross-Site Scripting protection
+            "Strict-Transport-Security",
+            "X-Content-Type-Options",
+            "X-Frame-Options",
+            "Content-Security-Policy",
+            "X-XSS-Protection",
         ]
-        
+
         for header in required_headers:
             if header not in headers:
                 missing_headers.append(header)
-        
+
         if missing_headers:
             print(f"Missing headers: {', '.join(missing_headers)}")
         else:
@@ -54,6 +56,7 @@ def ssl_check(host):
         print(f"Checking SSL/TLS configuration for {host}...")
         context = ssl.create_default_context()
         with context.wrap_socket(socket.socket(), server_hostname=host) as s:
+            s.settimeout(8)
             s.connect((host, 443))  # Attempt connection on port 443 (HTTPS)
             cert = s.getpeercert()
             print(f"SSL Certificate for {host} - Subject: {cert['subject']}")
@@ -87,4 +90,3 @@ def vuln_scanner(target):
 if __name__ == "__main__":
     target = input("Enter the target (e.g., example.com or https://example.com): ").strip()
     vuln_scanner(target)
-

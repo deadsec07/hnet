@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hnet"
+version = "0.1.1"
+description = "hnet pentest toolkit CLI and tools"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "hnet maintainers" }]
+keywords = ["pentest", "security", "cli"]
+dependencies = [
+  "requests>=2.31,<3",
+  "beautifulsoup4>=4.10,<5",
+  "fpdf==1.7.2",
+  "pynput>=1.7,<2",
+  "python-nmap>=0.7,<1",
+  "dnspython>=2.4,<3",
+  "python-whois>=0.7,<1",
+  "scapy>=2.5,<3",
+  "pybluez>=0.23,<1",
+]
+
+[project.scripts]
+hnet = "hnet_cli.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["autoexploit*", "tools*", "hnet_cli*"]

@@ -1,13 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Ensure Python 3 and virtualenv are installed
-echo "Setting up a Python virtual environment..."
-
+echo "[hnet] Creating Python virtual environment in ./venv ..."
 python3 -m venv venv
+
+echo "[hnet] Activating venv and installing dependencies..."
 source venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/requirements.txt"
 
-# Install dependencies from the requirements file
-pip install -r requirements.txt
-
-echo "Virtual environment setup complete. To activate, run 'source venv/bin/activate'."
-
+echo "[hnet] Virtual environment ready. Activate with: source venv/bin/activate"
